@@ -3,7 +3,14 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.25'
 	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.flywaydb.flyway' version '8.5.0'
+	id 'org.jooq.jooq-codegen-gradle' version '3.19.24'
 }
+
+def jdbcDriver = "org.postgresql.Driver"
+def dbUrl = "jdbc:postgresql://127.0.0.1:15432/postgres"
+def dbUser = "myuser"
+def dbPassword = "password"
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -19,15 +26,59 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	runtimeOnly 'org.postgresql:postgresql'
+	jooqCodegen 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+	testImplementation 'io.mockk:mockk:1.14.2'
+	testImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.jooq:jooq:3.19.11'
+	implementation 'org.jooq:jooq-meta:3.19.11'
+	implementation 'org.jooq:jooq-codegen:3.19.11'
+	implementation 'org.jooq:jooq-postgres-extensions:3.19.11'
+}
+
+sourceSets.main {
+	java.srcDirs 'build/generated-sources/jooq'
+}
+
+flyway {
+    driver = "${jdbcDriver}"
+    url = "${dbUrl}"
+    user = "${dbUser}"
+    password = "${dbPassword}"
+}
+
+jooq {
+	configuration {
+
+		jdbc {
+            driver = "${jdbcDriver}"
+            url = "${dbUrl}"
+            user = "${dbUser}"
+            password = "${dbPassword}"
+		}
+		generator {
+			database {
+				name = "org.jooq.meta.postgres.PostgresDatabase"
+				inputSchema = "public"
+				includes = ".*"
+			}
+
+			target {
+				packageName = "org.example.bookmanager.db.jooq.gen"
+			}
+		}
+	}
 }
 
 kotlin {
