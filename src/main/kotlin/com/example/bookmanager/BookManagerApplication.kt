@@ -8,5 +8,4 @@ class BookManagerApplication
 
 fun main(args: Array<String>) {
 	runApplication<BookManagerApplication>(*args)
-	println("Hello, World!")
 }
