@@ -79,7 +79,7 @@ Kotlin + Spring Boot + jOOQ を用いて実装されており、RESTful APIと�
 
 ### 必要環境
 
-- Java 17
+- Java 21
 - Docker & Docker Compose
 
 ### プロジェクト生成元
